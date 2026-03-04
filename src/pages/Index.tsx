@@ -1,12 +1,90 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from "react";
+import { studentController } from "@/controllers/studentController";
+import StudentForm from "@/components/StudentForm";
+import StudentTable from "@/components/StudentTable";
+import ApiLog, { type LogEntry } from "@/components/ApiLog";
+import type { StudentResponseDTO } from "@/dtos/StudentResponseDTO";
+import { Badge } from "@/components/ui/badge";
+import { GraduationCap, Server } from "lucide-react";
 
 const Index = () => {
+  const [students, setStudents] = useState<StudentResponseDTO[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+
+  const addLog = (method: string, endpoint: string, status: number, message?: string) => {
+    setLogs((prev) => [...prev, { method, endpoint, status, message, timestamp: new Date().toISOString() }]);
+  };
+
+  const loadStudents = () => {
+    const res = studentController.getStudents();
+    addLog("GET", "/students", res.status);
+    if (res.data) setStudents(res.data);
+  };
+
+  useEffect(() => {
+    // Health check
+    addLog("GET", "/health", 200, "ok: true");
+    loadStudents();
+  }, []);
+
+  const handleCreate = (data: { name: string; email: string; gpa: number }) => {
+    setError(null);
+    const res = studentController.createStudent(data);
+    addLog("POST", "/students", res.status, res.error?.message);
+    if (res.error) {
+      setError(res.error.message);
+    } else {
+      loadStudents();
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    const res = studentController.deleteStudent(id);
+    addLog("DELETE", `/students/${id}`, res.status, res.error?.message);
+    if (res.data) loadStudents();
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border/60 bg-card">
+        <div className="container flex items-center justify-between py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <GraduationCap className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">Student Management</h1>
+              <p className="text-xs text-muted-foreground">Layered Architecture Demo</p>
+            </div>
+          </div>
+          <Badge variant="outline" className="gap-1.5 border-success/40 text-success">
+            <Server className="h-3 w-3" />
+            localhost:4000
+          </Badge>
+        </div>
+      </header>
+
+      {/* Architecture badges */}
+      <div className="container py-4">
+        <div className="flex flex-wrap gap-2">
+          {["Controller", "Service", "Repository", "DTO", "AppError"].map((layer) => (
+            <Badge key={layer} variant="secondary" className="text-xs">{layer}</Badge>
+          ))}
+        </div>
       </div>
+
+      {/* Main content */}
+      <main className="container pb-12">
+        <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
+          <div className="space-y-6">
+            <StudentForm onSubmit={handleCreate} error={error} />
+            <ApiLog logs={logs} />
+          </div>
+          <StudentTable students={students} onDelete={handleDelete} />
+        </div>
+      </main>
     </div>
   );
 };
