@@ -1,16 +1,9 @@
 import { studentService } from "@/services/studentService";
 import { toCreateStudentDTO } from "@/dtos/CreateStudentDTO";
-import { formatError, type ErrorResponse } from "@/errors/AppError";
-import type { StudentResponseDTO } from "@/dtos/StudentResponseDTO";
-
-interface ApiResponse<T> {
-  data?: T;
-  error?: ErrorResponse;
-  status: number;
-}
+import { formatError } from "@/errors/AppError";
 
 export const studentController = {
-  getStudents(): ApiResponse<StudentResponseDTO[]> {
+  getStudents() {
     try {
       const students = studentService.listStudents();
       return { data: students, status: 200 };
@@ -20,7 +13,7 @@ export const studentController = {
     }
   },
 
-  createStudent(body: unknown): ApiResponse<StudentResponseDTO> {
+  createStudent(body) {
     try {
       const dto = toCreateStudentDTO(body);
       const student = studentService.registerStudent(dto);
@@ -31,7 +24,7 @@ export const studentController = {
     }
   },
 
-  deleteStudent(id: string): ApiResponse<{ message: string }> {
+  deleteStudent(id) {
     try {
       studentService.removeStudent(id);
       return { data: { message: "Student deleted successfully" }, status: 200 };

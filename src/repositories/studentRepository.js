@@ -1,7 +1,4 @@
-import type { Student } from "@/types/Student";
-
-// In-memory mock database
-let students: Student[] = [
+let students = [
   { id: "1", name: "Bat-Erdene", email: "baterdene@example.com", gpa: 3.8, createdAt: new Date().toISOString() },
   { id: "2", name: "Solongo", email: "solongo@example.com", gpa: 3.5, createdAt: new Date().toISOString() },
   { id: "3", name: "Temuulen", email: "temuulen@example.com", gpa: 2.9, createdAt: new Date().toISOString() },
@@ -10,16 +7,16 @@ let students: Student[] = [
 let nextId = 4;
 
 export const studentRepository = {
-  findAll(): Student[] {
+  findAll() {
     return [...students];
   },
 
-  findByEmail(email: string): Student | undefined {
+  findByEmail(email) {
     return students.find((s) => s.email === email.toLowerCase());
   },
 
-  create(data: { name: string; email: string; gpa: number }): Student {
-    const student: Student = {
+  create(data) {
+    const student = {
       id: String(nextId++),
       name: data.name,
       email: data.email,
@@ -30,7 +27,7 @@ export const studentRepository = {
     return student;
   },
 
-  deleteById(id: string): boolean {
+  deleteById(id) {
     const index = students.findIndex((s) => s.id === id);
     if (index === -1) return false;
     students.splice(index, 1);

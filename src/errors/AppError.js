@@ -1,19 +1,12 @@
 export class AppError extends Error {
-  statusCode: number;
-
-  constructor(message: string, statusCode: number) {
+  constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
     this.name = "AppError";
   }
 }
 
-export interface ErrorResponse {
-  message: string;
-  statusCode: number;
-}
-
-export function formatError(error: unknown): ErrorResponse {
+export function formatError(error) {
   if (error instanceof AppError) {
     return { message: error.message, statusCode: error.statusCode };
   }

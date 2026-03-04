@@ -2,17 +2,16 @@ import { useState, useEffect } from "react";
 import { studentController } from "@/controllers/studentController";
 import StudentForm from "@/components/StudentForm";
 import StudentTable from "@/components/StudentTable";
-import ApiLog, { type LogEntry } from "@/components/ApiLog";
-import type { StudentResponseDTO } from "@/dtos/StudentResponseDTO";
+import ApiLog from "@/components/ApiLog";
 import { Badge } from "@/components/ui/badge";
 import { GraduationCap, Server } from "lucide-react";
 
 const Index = () => {
-  const [students, setStudents] = useState<StudentResponseDTO[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [students, setStudents] = useState([]);
+  const [error, setError] = useState(null);
+  const [logs, setLogs] = useState([]);
 
-  const addLog = (method: string, endpoint: string, status: number, message?: string) => {
+  const addLog = (method, endpoint, status, message) => {
     setLogs((prev) => [...prev, { method, endpoint, status, message, timestamp: new Date().toISOString() }]);
   };
 
@@ -23,12 +22,11 @@ const Index = () => {
   };
 
   useEffect(() => {
-    // Health check
     addLog("GET", "/health", 200, "ok: true");
     loadStudents();
   }, []);
 
-  const handleCreate = (data: { name: string; email: string; gpa: number }) => {
+  const handleCreate = (data) => {
     setError(null);
     const res = studentController.createStudent(data);
     addLog("POST", "/students", res.status, res.error?.message);
@@ -39,7 +37,7 @@ const Index = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id) => {
     const res = studentController.deleteStudent(id);
     addLog("DELETE", `/students/${id}`, res.status, res.error?.message);
     if (res.data) loadStudents();
@@ -47,7 +45,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border/60 bg-card">
         <div className="container flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
@@ -66,7 +63,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Architecture badges */}
       <div className="container py-4">
         <div className="flex flex-wrap gap-2">
           {["Controller", "Service", "Repository", "DTO", "AppError"].map((layer) => (
@@ -75,7 +71,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Main content */}
       <main className="container pb-12">
         <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
           <div className="space-y-6">

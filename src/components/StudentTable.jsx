@@ -3,20 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, GraduationCap } from "lucide-react";
-import type { StudentResponseDTO } from "@/dtos/StudentResponseDTO";
 
-interface StudentTableProps {
-  students: StudentResponseDTO[];
-  onDelete: (id: string) => void;
-}
-
-function getGpaBadgeVariant(gpa: number) {
+function getGpaBadgeVariant(gpa) {
   if (gpa >= 3.5) return "default";
   if (gpa >= 2.5) return "secondary";
   return "destructive";
 }
 
-const StudentTable = ({ students, onDelete }: StudentTableProps) => {
+const StudentTable = ({ students, onDelete }) => {
   return (
     <Card className="border-border/60 shadow-sm">
       <CardHeader className="pb-4">

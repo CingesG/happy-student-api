@@ -2,25 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Terminal } from "lucide-react";
 
-export interface LogEntry {
-  method: string;
-  endpoint: string;
-  status: number;
-  message?: string;
-  timestamp: string;
-}
-
-interface ApiLogProps {
-  logs: LogEntry[];
-}
-
-function statusColor(status: number) {
+function statusColor(status) {
   if (status < 300) return "default";
   if (status < 500) return "destructive";
   return "secondary";
 }
 
-const ApiLog = ({ logs }: ApiLogProps) => {
+const ApiLog = ({ logs }) => {
   return (
     <Card className="border-border/60 shadow-sm">
       <CardHeader className="pb-3">

@@ -5,18 +5,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserPlus } from "lucide-react";
 
-interface StudentFormProps {
-  onSubmit: (data: { name: string; email: string; gpa: number }) => void;
-  error?: string | null;
-  loading?: boolean;
-}
-
-const StudentForm = ({ onSubmit, error, loading }: StudentFormProps) => {
+const StudentForm = ({ onSubmit, error, loading }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [gpa, setGpa] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ name, email, gpa: parseFloat(gpa) });
     setName("");
